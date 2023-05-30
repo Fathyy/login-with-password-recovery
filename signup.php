@@ -11,17 +11,18 @@ include "includes/config.php";
     $cpassword=md5($_POST['cpassword']);
 
     //checking if the username exists
-    $sql2="SELECT * FROM users WHERE email=:email OR fname=:fname";
+    $sql2="SELECT * FROM users WHERE email=:email";
     $query0=$dbh->prepare($sql2);
     $query0->bindParam(':email', $email, PDO::PARAM_STR);
     $query0->bindParam(':fname', $fname, PDO::PARAM_STR);
     $query0->execute();
-    if ($query0->rowCount() > 0) {
-      echo "This email or username already exists";
+    $result = $query0->fetch(PDO::FETCH_ASSOC);
+    if ($result) {
+      echo "Email exists";
     }
-    
+
     else{
-      if ($password === $cpassword) {
+        if ($password === $cpassword) {
      $sql="INSERT INTO users (fname, lname, email, password, contactno)
      VALUES (:fname, :lname, :email, :password, :cnumber)";
      $query=$dbh->prepare($sql);
@@ -42,11 +43,10 @@ include "includes/config.php";
       echo "Something went wrong.Please try again";
     }
   }
-  else {
+  else{
     echo "Passwords don't match";
   }
 }
- 
 }
 ?>
 
