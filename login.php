@@ -5,24 +5,24 @@ include "includes/config.php";
 if (isset($_POST['submit'])) {
     $email=$_POST['email'];
     $password=$_POST['password'];
-    $sql= "SELECT * FROM users WHERE email=:email";
-    $query=$dbh->prepare($sql);
-    $query->bindParam(':email', $email, PDO::PARAM_STR);
-    $query->execute();
-    $results = $query -> fetchAll(PDO::FETCH_OBJ);
-    if ($query->rowCount() > 0) {
-      if ($password === $_POST['password']) {
-        $_SESSION["login"] =true;
-        $_SESSION['id']=$id;
-        header("location:login_success.php");
-      }
-      else {
-        echo "wrong password";
-      }
-}
-else {
-  echo "User not registered";
-}
+
+    // check if fields are empty
+    if (!$email || !$password) {
+        echo "Enter your details";
+    } else {
+        $sql= "SELECT * FROM users WHERE email=:email";
+        $query=$dbh->prepare($sql);
+        $query->bindParam(':email', $email, PDO::PARAM_STR);
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $_SESSION['login'] = true;
+            $_SESSION['id'] = $id;
+            header("location:login_success.php");
+            exit;
+        }
+
+    }
 }
 ?>
 
